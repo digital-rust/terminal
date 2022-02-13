@@ -1,23 +1,40 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>friendly terminal</title>
-        <!-- link rel="stylesheet" href="index.css"> -->
-        <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"> -->
-    	</head>
-	<body>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <!--title-->
+    <h1>terminal [a.0.0.1]</h1>
+    <!--#############################################-->
 
+    <!--choose com port-->
+    <select id="com_port" name="com_port">
+        <option>com port</option>
+    </select>
+    <button id="refres_com_port" name="refresh_com_port">refresh</button>
+    <button id="connect_com_port" nam="connect_to_virtual_port">connect</button>
+    <hr />
+    <!--#############################################-->
 
-		<h1>the friendly terminal</h1>
-        <h2>a terminal that just doesn't suck</h2>
-        
-        <hr />
-        
-        <script defer src="./render.js"></script>
-	
+    <!--data to transmit (buff size is handled in js)-->
+    <input type="text" id="data_tx" name="data_tx" maxlength="4"></input>
+    <button id="send_data" name="refresh_com_port">send</button>
+    <hr />
+    <!--#############################################-->
 
-    </body>	
+    <!--data polled from the backend and flushed here -->
+    <div id="rx_txt">rx -></div> 
+    <textarea rows="8" cols="80" id="queryText" name="query" requried></textarea>
+    <button id="queryText_sz">+</button>
+    <!--#############################################-->
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
 </html>
