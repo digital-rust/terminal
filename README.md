@@ -57,7 +57,7 @@ here is why [most are under dev]:
 
 <p align="right">(<a href="#top">back ^</a>)</p>
 
-### built With
+### built with
 
 * [Electron.js] (https://www.electronjs.org/)
 * [Python] (https://www.python.org/)
