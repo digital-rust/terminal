@@ -1,0 +1,14 @@
+/* styles.css */
+
+/* Add styles here to customize the appearance of your app */
+body {
+    background-color: rgb(0, 0, 0);
+}
+
+h1 {
+    color: rgb(24, 150, 51);
+}
+
+#rx_txt {
+    color: rgb(184, 1, 16);
+}
