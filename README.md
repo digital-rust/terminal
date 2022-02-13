@@ -57,12 +57,11 @@ here is why [most are under dev]:
 
 <p align="right">(<a href="#top">back ^</a>)</p>
 
-### Built With
-
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+### built With
 
 * [Electron.js] (https://www.electronjs.org/)
 * [Python] (https://www.python.org/)
+* [pyserial]
 
 <p align="right">(<a href="#top">back ^</a>)</p>
 
