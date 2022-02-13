@@ -1,12 +1,12 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "terminal",
+  "version": "0.0.1-a",
+  "description": "the serial terminal that does not suck",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/makaveevognyan/terminal",
   "keywords": [
     "Electron",
     "quick",
@@ -14,8 +14,8 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "",
+  "license": "",
   "devDependencies": {
     "electron": "^16.0.8",
     "electron-rebuild": "^3.2.7"

@@ -5,7 +5,6 @@
 // selectively enable features needed in the rendering
 // process.
 
-// Process buttons - todo: link with main process https://www.youtube.com/watch?v=rX3axskesDw&ab_channel=Codevolution
 // Refresh available virtual ports
 const COM_refreshBtn = document.getElementById('refres_com_port');
 COM_refreshBtn.addEventListener('click', function() {
