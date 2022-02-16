@@ -86,6 +86,7 @@ here is why [most are under dev]:
 <!-- ROADMAP -->
 ## roadmap
 
+**Source code & App-related**
 - [x] functional backend
 - [x] some kind of frontend (functionality is todo)
 - [ ] hook up frontend to backend
@@ -95,11 +96,38 @@ here is why [most are under dev]:
 - [ ] optimize CPU usage in TerminalServer/TCPServer
 - [ ] fix issues with 'EXIT' to close TCPServer
 - [ ] replace parse_messages with proper interpreting of msgs
+- [ ] add unit tests
+- [x] migrate frontend tcp handler from zmq to native node 'net' module
+- [ ] TCP_server's __start_reader_thread() throws ConnectionResetError exception (line 34) when closing from frontend, needs to be captured and close server gracefully
+- [ ] handle exception if frontend not able to connect to backend node
+- [ ] handle exceptions if frontend msgs cannot be sent to backend node
+- [ ] add 'app initialized' notification in frontend if all goes well at app startup, for testing purposes
+- [ ] frameless window
+- [ ] 'about' in menu
+- [ ] upload pico test FW (/utils/hw_test/)
+
+**roadmap for testing hardware**
+- [ ] finalize & freeze communication testing over usb serial with RP2040 Rpi Pico
+- [ ] develop same for UART to run via Rpi 4B
+- [ ] turn Rpi 4B into webserver for remote connection to run tests
+- [ ] scale that into Jenkins for CI/CD stuff
+- [ ] write test suite
+- [ ] develop comm. testing firmware for Pico over UART for USB<->RS232 Pico<->Rpi4B interface
+
+**roadmap for the distant future**
+- [ ] website
+- [ ] docs on the website
+- [ ] macros
+- [ ] deci/hexa/octal system choices
+- [ ] event on press 'ENTER' transmit to device
+- [ ] little/big endianness options  
+
 
 See the [open issues](https://github.com/makaveevognyan/terminal/issues) for a full list of proposed features (and known issues).
 
 ## license
 todo
+
 ## contact
 todo
 

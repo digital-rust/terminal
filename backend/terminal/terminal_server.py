@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
+import struct
 import time
 import platform
 from serial.serialutil import SerialException
-from SerialServer import SerialServer
-from TCPServer import TCPServer
+from terminal.serial_server import SerialServer
+from terminal.TCP_server import TCPServer
+
+# import struct here
+# create enum for protocol
+# unpack incoming bytearray into the enum
 
 class TerminalServer():
 

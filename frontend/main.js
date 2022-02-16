@@ -1,62 +1,24 @@
 // MAIN PROC
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow} = require('electron');
 const path = require('path');
 
-// NETWORK
-const zmq = require('zeromq');
-const sock = new zmq.Socket('pair')
-const backend_addr = 'tcp://127.0.0.1:5651'
-
 function createWindow () {
-  // Create the browser window.
+  // create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+        nodeIntegration: true,
+        contextIsolation: false,
+        preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  // this is the logic that should happen
-  // for textbox content to be sent
-  // when button 'send' is pressed
-  // put this somewhere else, not in main
-  // ideally, a whole folder would be
-  // dedicated to the client comms
-  // data from the render to the main
-  // shall be passed and processed in that folder.
-  // those other js files will be referenced using <script>
-  // in index.html (single-page)
-  //SEPARATES FRONTEND<->BACKEND LOGIC
-  //FROM THE ACTUAL DESIGN
-  async function runClient() {
-      console.log('connecting to back node at: [', backend_addr,']');
-      sock.connect(backend_addr);
-      console.log('connected to back node at: [', backend_addr, ']');
-  
-      // simulate connect button click
-      var connectBtn_Onclick = false;
-      console.log(connectBtn_Onclick)
-      setTimeout(function() {ConnectBtnClick(connectBtn_Onclick);}, 2000);
-    }  
-    runClient();
-  async function ConnectBtnClick(connectbutton) {
-      connectbutton = true;
-      console.log(connectbutton);
-  
-      if (connectbutton) {
-          console.log('connect was clicked..');
-          sock.send('start ser');
-          buf_srx = sock.on('message', function(msg) {
-              console.log('rx <-', msg.toString());
-              })
-      };
-      }
-
-  // and load the index.html of the app.
+ // // load the index.html of the app
   mainWindow.loadFile('index.html')
-  // Open the DevTools.
+
+  // open devtools
   mainWindow.webContents.openDevTools()
 }
 
