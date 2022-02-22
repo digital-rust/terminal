@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 
-import struct
 import time
 import platform
 from serial.serialutil import SerialException
 from terminal.serial_server import SerialServer
 from terminal.TCP_server import TCPServer
-
-# import struct here
-# create enum for protocol
-# unpack incoming bytearray into the enum
 
 class TerminalServer():
 
@@ -19,6 +14,8 @@ class TerminalServer():
         self.TCPServer = TCPServer()
         self.SerialServer = SerialServer()
         self.set_default_TCP()
+        self.__RUN = True
+
 
     def set_default_TCP(self):
         TCP_HOST = '127.0.0.1'
@@ -30,7 +27,7 @@ class TerminalServer():
         # Main loop of program
         with self.TCPServer as FRONTEND:
             with self.SerialServer as RS232:
-                while True:
+                while self.__RUN:
                     time.sleep(0.1)    
                     # Client Logic
                     data = FRONTEND.read_from_client()
@@ -38,10 +35,6 @@ class TerminalServer():
                         pass
                     else:
                         data = self.parse_client_message(data) #parse msg
-                        
-                        if(data == "EXIT\n"):
-                            print("Server is exiting\n")
-                            break
                         if not data:
                             pass
                         else:
@@ -55,6 +48,7 @@ class TerminalServer():
                             continue
                         else:
                             FRONTEND.write_to_client(data)
+        print("TerminalServer has successfully exited")
     
     def parse_client_message(self, msg):
         # TODO: 
@@ -80,16 +74,13 @@ class TerminalServer():
             self.SerialServer.write_to_serial(msg)
         elif msg == b"EXIT":
             print("SerialTerminalServer exiting")
-            self.TCPServer.write_to_client(b"EXIT")
-            time.sleep(5)
             self.close()
             print("SerialTerminal exited")
         else:
             self.TCPServer.write_to_client(b"'" + bytes(msg) + b"'" + b" is not a valid command!")
 
     def close(self):
-        self.TCPServer.close()
-        self.SerialServer.close()
+        self.__RUN = False # Since other two are in context blocks should automatically be closed by with statement
         return 0
 
 if __name__ == "__main__":

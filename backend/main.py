@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
-
 from sys import argv
 from os import getcwd
 from os.path import join
+
+
 
 def start_server():
     from terminal.terminal_server import TerminalServer
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     run_tests = None
     run_server = None
 
+
     if(len(argv) == 1):
         run_tests = 1 # 1 to run, 0 not to run
         run_server = -1 # -1 to ask, 0 to not run, 1 to run
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     else:
         run_tests = parse_arg(argv[1])
         run_server = parse_arg(argv[2])
+
 
     if(run_tests == 1): # 1 for run tests
         import pytest
@@ -43,7 +45,8 @@ if __name__ == "__main__":
         print("Skipping tests")
     else: 
         raise ValueError(f"run_tests must be 0 or 1 not {run_tests}")
-
+    
+    
     if(run_server == -1):
         run_server = input("Startup server y/n? ")
         if(run_server.lower() == "y"):
@@ -59,3 +62,4 @@ if __name__ == "__main__":
         start_server()
     else:
         raise ValueError(f"run_server must be -1,0 or 1 not {run_server}")
+    
