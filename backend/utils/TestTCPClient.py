@@ -25,21 +25,25 @@ class TCPClient():
             time.sleep(0.1)
             msg = ""
             while self.__EXIT_THREADS:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 char = sys.stdin.read(1)
                 if(char == "\n"):
                     break
                 msg += char
             self.read_list.append(msg)
+            if(msg == "EXIT"):
+                self.__EXIT_THREADS.clear()
+                break
         print("Client: ReaderThread exited")
 
     def __reader_thread2(self):
         while self.__EXIT_THREADS:
-            time.sleep(0.1)
-            data = self.socket.recv(1024) 
-            if data == b'EXIT':
+            time.sleep(0.000001)
+            try:
+                data = self.socket.recv(1024) 
+            except ConnectionAbortedError:
                 break
-            elif data == b'':
+            if data == b'':
                 continue
             else:
                 print(f"Receiving: {data.decode('UTF-8')}")
@@ -56,7 +60,8 @@ class TCPClient():
                 print(f"Writing: {usr_input}")
                 if(usr_input == "EXIT"):
                     self.socket.sendall(bytearray(usr_input, "utf-8"))
-                    self.__EXIT_THREADS.clear()
+                    time.sleep(1)
+                    self.socket.sendall(bytearray(usr_input, "utf-8"))
                     break
                 self.socket.sendall(bytearray(usr_input, "utf-8"))
             except IndexError:
@@ -64,8 +69,6 @@ class TCPClient():
 
     def __exit__(self, type, value, traceback):
         self.socket.close()
-        self.__reader_thread.join()
-        self.__reader_thread2.join()
 
 
 
