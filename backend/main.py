@@ -1,5 +1,3 @@
-
-
 from sys import argv
 from os import getcwd
 from os.path import join

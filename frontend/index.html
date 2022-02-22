@@ -17,20 +17,20 @@
     <select id="com_port" name="com_port">
         <option>com port</option>
     </select>
-    <button id="refres_com_port" name="refresh_com_port">refresh</button>
+    <button id="refresh_com_port" name="refresh_com_port">refresh</button>
     <button id="connect_com_port" nam="connect_to_virtual_port">connect</button>
     <hr />
     <!--#############################################-->
 
     <!--data to transmit (buff size is handled in js)-->
-    <input type="text" id="data_tx" name="data_tx" maxlength="4"></input>
+    <input type="text" id="data_tx" name="data_tx" maxlength="9"></input>
     <button id="send_data" name="refresh_com_port">send</button>
     <hr />
     <!--#############################################-->
 
     <!--data polled from the backend and flushed here -->
     <div id="rx_txt">rx -></div> 
-    <textarea rows="8" cols="80" id="queryText" name="query" requried></textarea>
+    <textarea rows="12" cols="30" id="queryText" name="query" readonly></textarea>
     <button id="queryText_sz">+</button>
     <!--#############################################-->
 

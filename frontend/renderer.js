@@ -5,39 +5,84 @@
 // selectively enable features needed in the rendering
 // process.
 
-// Refresh available virtual ports
-const COM_refreshBtn = document.getElementById('refres_com_port');
-COM_refreshBtn.addEventListener('click', function() {
-    console.log('REFRESHING..\n todo: refresh functionality');
+const network = require('./network.js'); 
+const backend_addr = '127.0.0.1';
+const backend_port = 5651;
+
+const refresh = document.getElementById('refresh_com_port');
+const connect = document.getElementById('connect_com_port');
+const send = document.getElementById('send_data');
+var receive = document.getElementById("queryText");
+
+// instantiate a TCP client for the session
+var client = createBridge();
+
+// keep listening
+onRx(); //
+// try to remove this dependancy
+// separate function for this in network.js
+// not really needed for this
+
+// load available ports
+loadPorts();
+
+
+
+
+
+
+
+
+
+
+refresh.addEventListener('click', function() {
+    console.log('REFRESHING..\n'); // Refresh available virtual ports
 });
 
-// Connect to virtual COM port
-const COM_connect = document.getElementById('connect_com_port');
-COM_connect.addEventListener('click', function() {
-    console.log('CONNECTING..\n todo: connect functionality');
+connect.addEventListener('click', function() {
+    console.log('CONNECTING..\n todo: connect functionality'); // Connect to virtual COM port
 });
 
-// Send data over RS232
-const DATA_rs232_tx = document.getElementById('send_data');
-DATA_rs232_tx.addEventListener('click', function() {
-    console.log('SENDING..\n todo: send functionality');
+send.addEventListener('click', function() {
+    var user_data = document.getElementById('data_tx').value; // get data from text box
+    client.onData(user_data); // Send data over RS232 [utf-8 encoding by default]
 });
 
-var textarea = document.getElementById("queryText");
+async function onRx() {
+    client.onRxData(receive);
+}
+
+function loadPorts() {
+    // looks for ports on the system (handled in backend)
+
+}
+
+function createBridge() {
+    return new network.Bridge(backend_addr, backend_port);
+}
+
+function loadPorts() {
+    // send message based on msg prot to load up
+    // define custom msg
+    var ReqPortsPending = 'list_ports';
+    client.onData(ReqPortsPending);
+}
+
 var largeRows = "20";
 var largeCols = "100";
-var normalRows = textarea.rows;
-var normalCols = textarea.cols;
+var normalRows = receive.rows;
+var normalCols = receive.cols;
 
+// deprecate this by dynamically resizeable box
 document.getElementById("queryText_sz").onclick = function()
 {
     if(this.innerHTML == "+") {
-        textarea.rows = largeRows;
-        textarea.cols = largeCols;
+        receive.rows = largeRows;
+        receive.cols = largeCols;
         this.innerHTML = "-"
     } else {
-        textarea.rows = normalRows;
-        textarea.cols = normalCols;
+        receive.rows = normalRows;
+        receive.cols = normalCols;
         this.innerHTML = "+"
     }
 }
