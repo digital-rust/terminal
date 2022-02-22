@@ -27,7 +27,6 @@ class TerminalServer():
         # Main loop of program
         with self.TCPServer as FRONTEND:
             with self.SerialServer as RS232:
-                print(self.TCPServer, self.SerialServer)
                 while self.__RUN:
                     time.sleep(0.1)    
                     # Client Logic
