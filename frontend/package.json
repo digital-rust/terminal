@@ -1,26 +1,24 @@
 {
   "name": "terminal",
-  "version": "0.0.1-a",
+  "version": "0.0.3-a",
   "description": "the serial terminal that does not suck",
-  "main": "main.js",
+  "main": "./build/main.js",
   "scripts": {
-    "start": "electron ."
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "start": "npm run build && electron ./build/main.js"
   },
   "repository": "https://github.com/makaveevognyan/terminal",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
+  "keywords": ["serial", "terminal"],
   "author": "",
   "license": "",
   "devDependencies": {
-    "electron": "^16.0.8",
-    "electron-rebuild": "^3.2.7"
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "electron": "^17.0.1",
+    "eslint": "^8.9.0",
+    "typescript": "^4.5.5"
   },
-  "dependencies": {
-    "zeromq": "^5.2.8"
-  }
+  "dependencies": {}
 }

@@ -5,7 +5,7 @@
     <!--<img src="images/logo.png" alt="Logo" width="80" height="80"> -->
   </a>
 
-  <h3 align="center">terminal 0.0.1-a [pre-release]</h3>
+  <h3 align="center">terminal 0.0.3-a [pre-release]</h3>
 
   <p align="center">
     a simple serial terminal that simply doesn't suck
@@ -89,22 +89,26 @@ here is why [most are under dev]:
 **Source code & App-related**
 - [x] functional backend
 - [x] some kind of frontend (functionality is todo)
-- [ ] hook up frontend to backend
+- [x] hook up frontend to backend
   - [ ] clean up frontend code
-  - [ ] improve styling
   - [ ] create the "on-app-start" polling for available ports
 - [ ] optimize CPU usage in TerminalServer/TCPServer
 - [ ] fix issues with 'EXIT' to close TCPServer
-- [ ] replace parse_messages with proper interpreting of msgs
+- [ ] replace parse_messages with minimal msg protocol
 - [ ] add unit tests
 - [x] migrate frontend tcp handler from zmq to native node 'net' module
 - [ ] TCP_server's __start_reader_thread() throws ConnectionResetError exception (line 34) when closing from frontend, needs to be captured and close server gracefully
 - [ ] handle exception if frontend not able to connect to backend node
 - [ ] handle exceptions if frontend msgs cannot be sent to backend node
-- [ ] add 'app initialized' notification in frontend if all goes well at app startup, for testing purposes
 - [ ] frameless window
-- [ ] 'about' in menu
-- [ ] upload pico test FW (/utils/hw_test/)
+- [ ] custom menu
+- [x] upload pico test FW (/utils/)
+- [x] migrate to TypeScript
+
+miscellaneous
+- [ ] establish main<->render IPC for full control (+flexible tracking/debugging via logs etc.) of internal messaging 
+- [ ] consider small notification system (+enable/disable feature), notifying of app behaviour
+- [ ] complete documenting 'Getting Started' w/ latest additions (TS, ESLint, etc..)
 
 **roadmap for testing hardware**
 - [ ] finalize & freeze communication testing over usb serial with RP2040 Rpi Pico
