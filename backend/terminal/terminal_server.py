@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 
 from email import message
-from enum import Enum
 import time
 import platform
 from serial.serialutil import SerialException
 from terminal.serial_server import SerialServer
 from terminal.TCP_server import TCPServer
 
-class message_protocol(Enum):
+class message_protocol():
     """
         # [bytearray[uint16 CmdType][unspec Msg]]
     """
 
-    UINT16_T__TERM_ON_COM_CONNECT             = b'00',
-    UINT16_T__TERM_ON_PORT_DISCONNECT         = b'01',
-    UINT16_T__TERM_ON_PORT_REFRESH            = b'02',
-    UINT16_T__TERM_ON_BAUDRATE_CHANGE         = b'03',
-    UINT16_T__TERM_ON_TRANSMIT_DATA           = b'04',
+    UINT16_T__TERM_ON_COM_CONNECT             = b'00'
+    UINT16_T__TERM_ON_PORT_DISCONNECT         = b'01'
+    UINT16_T__TERM_ON_PORT_REFRESH            = b'02'
+    UINT16_T__TERM_ON_BAUDRATE_CHANGE         = b'03'
+    UINT16_T__TERM_ON_TRANSMIT_DATA           = b'04'
     UINT16_T__TERM_ON_REQUEST_PORTS           = b'05'
     UINT16_T__TERM_ON_SHUTDOWN                = b'06'
 
@@ -68,7 +67,8 @@ class TerminalServer():
     
     def parse_client_message(self, msg):
         cmd_id      = msg[:2]                   # command id
-        
+        cmd_sz      = 2                         # command id size
+
         # check legacy_parser for example on how to iteratively index a dict
         if cmd_id == message_protocol.UINT16_T__TERM_ON_COM_CONNECT:
             try:
@@ -94,7 +94,7 @@ class TerminalServer():
             # call 'br change' logic
             pass
         elif cmd_id == message_protocol.UINT16_T__TERM_ON_TRANSMIT_DATA:
-            self.SerialServer.write_to_serial(msg)
+            self.SerialServer.write_to_serial(msg[cmd_sz:])
             pass
         elif cmd_id == message_protocol.UINT16_T__TERM_ON_REQUEST_PORTS:
             # call 'return available ports' logic
