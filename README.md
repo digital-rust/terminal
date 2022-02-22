@@ -93,8 +93,8 @@ here is why [most are under dev]:
   - [ ] clean up frontend code
   - [ ] create the "on-app-start" polling for available ports
 - [ ] optimize CPU usage in TerminalServer/TCPServer
-- [ ] fix issues with 'EXIT' to close TCPServer
-- [ ] replace parse_messages with minimal msg protocol
+- [x] fix issues with 'EXIT' to close TCPServer
+- [x] replace parse_messages with minimal msg protocol
 - [ ] add unit tests
 - [x] migrate frontend tcp handler from zmq to native node 'net' module
 - [ ] TCP_server's __start_reader_thread() throws ConnectionResetError exception (line 34) when closing from frontend, needs to be captured and close server gracefully
