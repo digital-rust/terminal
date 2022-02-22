@@ -71,8 +71,11 @@ class TCPServer():
         return 0
 
     def close(self):
-        self.conn.close()
-        self.socket.close()
+        #Needs to happen before closing conn so there's no exception
         self.__EXIT_THREADS.clear() #Sets to false, threads should exit
         self.__reader_thread.join()
         self.__writer_thread.join()
+
+        self.conn.close()
+        self.socket.close()
+        print("TCPServer successfully exited")

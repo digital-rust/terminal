@@ -16,7 +16,7 @@ class SerialServer():
         self.serial_connection = None
 
         self.__EXIT_THREADS = Event()
-        self.__EXIT_THREADS.set() #Set to true
+        self.__EXIT_THREADS.set() # Set to true
         self.__ReadList = deque() # Linked list, behaves similarly but more performant for this purpose
         self.__WriteList = deque()
         self.__reader_thread, self.__writer_thread = Thread(target=self.__start_reader_thread), Thread(target=self.__start_writer_thread)
@@ -32,8 +32,13 @@ class SerialServer():
         self.__thread_starter()
     
     def close_serial_connection(self):
+        self.__EXIT_THREADS.clear()
+        self.__reader_thread.join()
+        self.__writer_thread.join()
         self.serial_connection.close()
         self.serial_connection = None # So it's possible to see if nothing is connected
+
+        
     
     def set_default_RS232(self):
         # Put defaults here
@@ -91,10 +96,13 @@ class SerialServer():
         self.close()
     
     def close(self):
+        self.__EXIT_THREADS.clear()
         try:
             self.serial_connection.close()
-        except AttributeError as e:
-            print("Attempted to close a non-existing connection", e)
+            self.__reader_thread.join()
+            self.__writer_thread.join()
+        except AttributeError:
+            print("SerialServer: Could not close SerialServer since it has not yet been started or has already been closed")
             
     def write_to_serial(self, msg):
         self.__WriteList.append(msg)
