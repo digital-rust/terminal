@@ -41,13 +41,26 @@ title = "Interface Definition between Frontend Client and Backend Server"
         [DISCONNECT.output.RETCODE]
             type = "uint_8"
 
+[SEND]
+    [SEND.input] # Sends data to serial device
+        [SEND.input.CMD_ID]
+            type = "uint_16"
+            value = 4
+        [SEND.input.DATA]
+            type = "utf_8"
+    [SEND.output]
+        [SEND.output.RETCODE]
+            type = "uint_8"
+
+        
 [SET_BAUD_RATE] # Set's the baud rate state of SerialServer
     [SET_BAUD_RATE.input]
         [SET_BAUD_RATE.input.CMD_ID]
             type = "uint_16"
-            value = 2
+            value = 5
         [SET_BAUD_RATE.input.baud_rate]
             type = "uint_32"
-    [SET_BAUD_RATE.output.RETCODE]
-        type = "uint_8"
+    [SET_BAUD_RATE.output]
+        [SET_BAUD_RATE.output.RETCODE]
+            type = "uint_8"
 
