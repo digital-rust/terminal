@@ -1,11 +1,53 @@
 title = "Interface Definition between Frontend Client and Backend Server"
+# Order of inputs and order of outputs is the order that the arguments arrive/depart in.
 
-[SHUTDOWN]
+[SHUTDOWN] # Shutdown the backend server
     [SHUTDOWN.input]
         [SHUTDOWN.input.CMD_ID]
             type = "uint_16"
             value = 0
     [SHUTDOWN.output]
-        [SHUTDOWN.output.ret_code]
+        [SHUTDOWN.output.RETCODE]
             type = "uint_8"
+
+[POLL_PORTS] # Polls for avaidable virtual ports(COM on windows, devs on linux)
+    [POLL_PORTS.input]
+        [POLL_PORTS.input.CMD_ID]
+            type = "uint_16"
+            value = 1
+    [POLL_PORTS.output]
+        [POLL_PORTS.output.RETCODE]
+            type = "uint_8"
+        [POLL_PORTS.output.PORTS]
+            type = ["utf_8"]
+
+[CONNECT]
+    [CONNECT.input] # Causes backend to connect to serial port
+        [CONNECT.input.CMD_ID]
+            type = "uint_16"
+            value = 2
+        [CONNECT.input.VIRTUAL_PORT]
+            type = "utf_8"
+    [CONNECT.output]
+        [CONNECT.output.RETCODE]
+            type = "uint_8"
+
+[DISCONNECT]
+    [DISCONNECT.input] # Causes backend to disconnect to serial port
+        [DISCONNECT.input.CMD_ID]
+            type = "uint_16"
+            value = 3
+    [DISCONNECT.output]
+        [DISCONNECT.output.RETCODE]
+            type = "uint_8"
+
+[SET_BAUD_RATE] # Set's the baud rate state of SerialServer
+    [SET_BAUD_RATE.input]
+        [SET_BAUD_RATE.input.CMD_ID]
+            type = "uint_16"
+            value = 2
+        [SET_BAUD_RATE.input.baud_rate]
+            type = "uint_32"
+    [SET_BAUD_RATE.output.RETCODE]
+        type = "uint_8"
 
