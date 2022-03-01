@@ -1,0 +1,11 @@
+title = "Interface Definition between Frontend Client and Backend Server"
+
+[SHUTDOWN]
+    [SHUTDOWN.input]
+        [SHUTDOWN.input.CMD_ID]
+            type = "uint_16"
+            value = 0
+    [SHUTDOWN.output]
+        [SHUTDOWN.output.ret_code]
+            type = "uint_8"
+
