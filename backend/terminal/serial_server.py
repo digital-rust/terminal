@@ -62,7 +62,6 @@ class SerialServer():
             
             if bytestoread > 0:
                 data = self.serial_connection.read(bytestoread)
-                
                 self.__ReadList.append(data)
             time.sleep(0.000001) # Essentially yields to any other threads
         print("Serial Reader thread ended")
@@ -72,9 +71,9 @@ class SerialServer():
         count = 0
         while(self.__EXIT_THREADS.is_set()):
             if(count >= 1):
-                self.count = 0 
+                count = 0 # count is merely to ensure all write orders are processed before clearing __WRITE
                 self.__WRITE.clear() # Clears flag so it waits again
-            if(self.__WRITE.wait(1) == False):
+            if(self.__WRITE.wait(1.) == False):
                 continue # Waits on __WRITE becoming true for a second, then repeats
                 # This is to allow a kill order to actually work rather than potentially block 
                 # forever because nothing is ever written. 
@@ -107,6 +106,7 @@ class SerialServer():
             self.__reader_thread.join()
             self.__writer_thread.join()
         except AttributeError:
+            # Should we just simply return, failing to close because there is no connection is not really an error
             print("SerialServer: Could not close SerialServer since it has not yet been started or has already been closed")
             
     def write_to_serial(self, msg):
