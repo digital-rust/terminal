@@ -24,16 +24,15 @@ class TerminalServer():
     def __init__(self):
         #default args just set for now to make my life easier
         self.working_machine = platform.system()
-        self.TCPServer = TCPServer()
+        self.TCPServer = TCPServer(*self.default_TCP())
         self.SerialServer = SerialServer()
-        self.set_default_TCP()
         self.__RUN = True
 
-    def set_default_TCP(self):
+    def default_TCP(self):
         TCP_HOST = '127.0.0.1'
         TCP_PORT = 5651
-        self.TCPServer.Host = TCP_HOST
-        self.TCPServer.Port = TCP_PORT
+        return TCP_HOST, TCP_PORT
+        
         
     def activate(self):
         # Main loop of program

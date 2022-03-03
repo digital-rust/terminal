@@ -5,10 +5,10 @@ from threading import Thread, Event
 
 class TCPServer():
 
-    def __init__(self):
+    def __init__(self, Host = None, Port = None):
         # Host: Standard loopback interface address (localhost)
         # Port: port to listen on (non-privileged ports are > 1023)
-        self.Host, self.Port = None, None
+        self.Host, self.Port = Host, Port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Needs to be destroyed appropriately
         self.__WRITE = Event()
         self.__EXIT_THREADS = Event()
@@ -39,7 +39,6 @@ class TCPServer():
 
     def __start_writer_thread(self):
         print("TCP Writer Thread Started")
-        test_count = 0
         count = 0
         while(self.__EXIT_THREADS.is_set()):
             if(count >= 1):
@@ -49,7 +48,6 @@ class TCPServer():
                 continue # Waits on __WRITE becoming true for a second, then repeats
                 # This is to allow a kill order to actually work rather than potentially block 
                 # forever because nothing is ever written. 
-            print(test_count)
             try:
                 data = self.__WriteList.popleft() # popleft So that it acts as a FIFO, not LIFO
                 print(f"TCPServer is writing: {data}")
@@ -57,7 +55,6 @@ class TCPServer():
                 print(f"TCPServer successfully wrote: {data}")
             except IndexError:
                 count += 1
-            test_count += 1
         print("TCP Writer thread ended")
 
     # __enter__ and __exit__ together allow for use with context manager 'with'.
