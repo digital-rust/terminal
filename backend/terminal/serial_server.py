@@ -7,24 +7,33 @@ from threading import Thread, Event
 
 class SerialServer():
 
-    def __init__(self):
-        self.port = None
-        self.baud_rate = None
-        self.byte_size = None
-        self.parity = None
-        self.stop_bits = None
-        self.timeout = None
+    def __init__(self,  virtual_port = None,
+                        baud_rate = None,
+                        byte_size = None,
+                        parity = None,
+                        stop_bits = None,
+                        timeout = None):
+        
+        self.virtual_port= virtual_port
+        self.baud_rate = baud_rate
+        self.byte_size = byte_size
+        self.parity = parity
+        self.stop_bits = stop_bits
+        self.timeout = timeout
+        
         self.serial_connection = None
-
         self.__EXIT_THREADS = Event()
+        self.__WRITE = Event()
         self.__EXIT_THREADS.set() # Set to true
         self.__ReadList = deque() # Linked list, behaves similarly but more performant for this purpose
         self.__WriteList = deque()
         self.__reader_thread, self.__writer_thread = Thread(target=self.__start_reader_thread), Thread(target=self.__start_writer_thread)
 
-        self.set_default_RS232()
     
     def create_serial_connection(self):
+        args = [self.virtual_port, self.baud_rate, self.byte_size, self.parity, self.stop_bits, self.timeout]
+        if(None in args):
+            raise ValueError(f"One of [self.port, self.baud_rate, self.byte_size, self.parity, self.stop_bits, self.timeout] has not been configured.")
         self.serial_connection = serial.Serial(port=self.virtual_port,     \
                                                   baudrate=self.baud_rate, \
                                                   bytesize=self.byte_size, \
@@ -38,19 +47,6 @@ class SerialServer():
         self.__writer_thread.join()
         self.serial_connection.close()
         self.serial_connection = None # So it's possible to see if nothing is connected
-
-        
-    
-    def set_default_RS232(self):
-        # Put defaults here
-        # Seems pointless but we might have set to defaults
-        # option for people. 
-        self.virtual_port = '/dev/tty.usbmodem11101' #some tty
-        self.baud_rate = 115200 
-        self.byte_size = 8
-        self.parity = 'N' 
-        self.stop_bits = 1 
-        self.timeout = 1
 
     def __thread_starter(self):
         self.__ReadList = deque() # Linked list, behaves similarly but more performant for this purpose
@@ -68,12 +64,20 @@ class SerialServer():
                 data = self.serial_connection.read(bytestoread)
                 
                 self.__ReadList.append(data)
-            time.sleep(0.1) # Essentially yields to any other threads
+            time.sleep(0.000001) # Essentially yields to any other threads
         print("Serial Reader thread ended")
 
     def __start_writer_thread(self):
         print("Serial Writer Thread started")
+        count = 0
         while(self.__EXIT_THREADS.is_set()):
+            if(count >= 1):
+                self.count = 0 
+                self.__WRITE.clear() # Clears flag so it waits again
+            if(self.__WRITE.wait(1) == False):
+                continue # Waits on __WRITE becoming true for a second, then repeats
+                # This is to allow a kill order to actually work rather than potentially block 
+                # forever because nothing is ever written. 
             try:
                 data = self.__WriteList.popleft() # popleft So that it acts as a FIFO, not LIFO
                 print(f"serial ser Attempting to write {data}")
@@ -87,7 +91,7 @@ class SerialServer():
                     raise Exception("Need to handle to write missing bytes in this case, left this for now")
                 print(f"serial ser {data} was written successfully")
             except IndexError:
-                time.sleep(0) #Lets other threads do something
+                count += 1
         print("Serial Writer Thread ended")
 
     def __enter__(self):
@@ -107,6 +111,7 @@ class SerialServer():
             
     def write_to_serial(self, msg):
         self.__WriteList.append(msg)
+        self.__WRITE.set()
         return 0
 
     def read_serial(self):
@@ -131,3 +136,15 @@ class SerialServer():
 
     def set_timeout(self, timeout):
         self.timeout = timeout
+
+
+if __name__ == "__main__":
+    virtual_port = '/dev/tty.usbmodem11101' #some tty
+    baud_rate = 115200 
+    byte_size = 8
+    parity = 'N' 
+    stop_bits = 1 
+    timeout = 1
+
+    s = SerialServer()
+    s.create_serial_connection()
