@@ -29,7 +29,6 @@ class SerialServer():
         self.__WriteList = deque()
         self.__reader_thread, self.__writer_thread = Thread(target=self.__start_reader_thread), Thread(target=self.__start_writer_thread)
 
-    
     def create_serial_connection(self):
         args = [self.virtual_port, self.baud_rate, self.byte_size, self.parity, self.stop_bits, self.timeout]
         if(None in args):
@@ -136,15 +135,3 @@ class SerialServer():
 
     def set_timeout(self, timeout):
         self.timeout = timeout
-
-
-if __name__ == "__main__":
-    virtual_port = '/dev/tty.usbmodem11101' #some tty
-    baud_rate = 115200 
-    byte_size = 8
-    parity = 'N' 
-    stop_bits = 1 
-    timeout = 1
-
-    s = SerialServer()
-    s.create_serial_connection()
