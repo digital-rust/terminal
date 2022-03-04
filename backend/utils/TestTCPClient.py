@@ -31,7 +31,7 @@ class TCPClient():
                     break
                 msg += char
             self.read_list.append(msg)
-            if(msg == "EXIT"):
+            if(msg == "06"):
                 self.__EXIT_THREADS.clear()
                 break
         print("Client: ReaderThread exited")
@@ -58,7 +58,7 @@ class TCPClient():
             try:
                 usr_input = self.read_list.pop()
                 print(f"Writing: {usr_input}")
-                if(usr_input == "EXIT"):
+                if(usr_input == "06"):
                     self.socket.sendall(bytearray(usr_input, "utf-8"))
                     time.sleep(1)
                     self.socket.sendall(bytearray(usr_input, "utf-8"))

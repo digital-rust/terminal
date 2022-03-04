@@ -24,16 +24,23 @@ class TerminalServer():
     def __init__(self):
         #default args just set for now to make my life easier
         self.working_machine = platform.system()
-        self.TCPServer = TCPServer()
-        self.SerialServer = SerialServer()
-        self.set_default_TCP()
+        self.TCPServer = TCPServer(*self.default_TCP())
+        self.SerialServer = SerialServer(*self.default_Serial())
         self.__RUN = True
 
-    def set_default_TCP(self):
+    def default_TCP(self):
         TCP_HOST = '127.0.0.1'
         TCP_PORT = 5651
-        self.TCPServer.Host = TCP_HOST
-        self.TCPServer.Port = TCP_PORT
+        return TCP_HOST, TCP_PORT
+
+    def default_Serial(self):
+        virtual_port = '/dev/tty.usbmodem1101' #some tty
+        baud_rate = 115200 
+        byte_size = 8
+        parity = 'N' 
+        stop_bits = 1 
+        timeout = 1
+        return virtual_port, baud_rate, byte_size, parity, stop_bits, timeout
         
     def activate(self):
         # Main loop of program
@@ -106,6 +113,6 @@ class TerminalServer():
         self.__RUN = False # Since other two are in context blocks should automatically be closed by with statement
         return 0
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     s = TerminalServer()
     s.activate()
