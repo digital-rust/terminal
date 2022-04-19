@@ -5,7 +5,7 @@
     <!--<img src="images/logo.png" alt="Logo" width="80" height="80"> -->
   </a>
 
-  <h3 align="center">terminal 0.0.3-a [pre-release]</h3>
+  <h3 align="center">terminal 0.0.5-a [pre-release]</h3>
 
   <p align="center">
     a simple serial terminal that simply doesn't suck
@@ -85,25 +85,22 @@ here is why [most are under dev]:
 
 <!-- ROADMAP -->
 ## roadmap
+> when most from the list are done, they are deleted
 
 **Source code & App-related**
-- [x] functional backend
-- [x] some kind of frontend (functionality is todo)
-- [x] hook up frontend to backend
   - [ ] clean up frontend code
   - [ ] create the "on-app-start" polling for available ports
 - [ ] optimize CPU usage in TerminalServer/TCPServer
-- [x] fix issues with 'EXIT' to close TCPServer
-- [x] replace parse_messages with minimal msg protocol
 - [ ] add unit tests
-- [x] migrate frontend tcp handler from zmq to native node 'net' module
-- [ ] TCP_server's __start_reader_thread() throws ConnectionResetError exception (line 34) when closing from frontend, needs to be captured and close server gracefully
 - [ ] handle exception if frontend not able to connect to backend node
 - [ ] handle exceptions if frontend msgs cannot be sent to backend node
 - [ ] frameless window
 - [ ] custom menu
-- [x] upload pico test FW (/utils/)
-- [x] migrate to TypeScript
+- [ ] fix interface messaging (cmd id needs to be appended to the data message from the FE)
+- [ ] couple frontend to backend processes
+  - [ ] spawn backend in main
+  - [ ] gracefully close (send exit cmd) backend on app exit
+- [ ] refactor events
 
 miscellaneous
 - [ ] establish main<->render IPC for full control (+flexible tracking/debugging via logs etc.) of internal messaging 

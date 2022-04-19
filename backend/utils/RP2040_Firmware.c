@@ -19,6 +19,7 @@
 #define ENDSTDIN    255
 #define CR          13
 #define LED_PIN     25
+#define TERMINATION '\0'
 
 void flash_led(int n) {
     /* flash led n times */
@@ -38,7 +39,7 @@ int main() {
     char msg[100];      // input buff
     char chr;           // input char
     int i = 0;          // input buff pointer
-    int cnt = 0;        // pong-pong session ID
+    int cnt = 0;        // ping-pong session ID
 
     memset(msg, 0, sizeof(msg));
 
@@ -51,9 +52,9 @@ int main() {
         while (chr != ENDSTDIN && chr != '\n' && chr != EOF) {
             msg[i++] = chr;
             if (chr == CR || i == (sizeof(msg) - 1)) {
-                msg[i] = '\0';     // termination
-                flash_led(1);       // flash once on Rx
-                sleep_ms(250);     // discern Rx from Tx blinks
+                msg[i] = TERMINATION;      // termination
+                flash_led(1);               // flash once on Rx
+                sleep_ms(250);             // delay to discern Rx from Tx blinks
 
                 if (strcmp(msg, "reboot\n")==0 && strcmp(msg, "REBOOT\n")==0) {
                     // flash LED 3 times before full reboot

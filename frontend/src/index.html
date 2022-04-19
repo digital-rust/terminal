@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <link rel="stylesheet" type="text/css" href="styles/styles.css">
-    <title>terminal [0.0.3-a]</title>
+    <title>terminal [0.0.5-a]</title>
   </head>
   <body>
     <!--title-->
@@ -16,18 +16,18 @@
     <select id="com_port">
         <option>ports</option>
     </select>
-    <button id="refresh_com_port">refresh</button>
-    <button id="connect_com_port">connect</button>
+    <button id="refresh_com_port" class="button">refresh</button>
+    <button id="connect_com_port" class="button">connect</button>
     <hr />
 
     <!--data to transmit (buff size is handled in js)-->
-    <textarea rows="12" cols="30" id="data_tx" maxlength="11"></textarea>
-    <button id="send_data">send</button>
+    <textarea id="data_tx" maxlength="11" class="textarea"></textarea>
+    <button id="send_data" class="button">send</button>
     <hr />
 
     <!--data polled from the backend and flushed here -->
     <div id="rx_txt">rx -></div> 
-    <textarea rows="12" cols="30" id="queryText" readonly></textarea>
+    <textarea id="queryText" class="textarea" readonly></textarea>
 
     <!-- You can also require other files to run in this process -->
     <script src="../build/renderer.js"></script>
