@@ -55,8 +55,6 @@ class SerialServer():
         self.serial_threads_active = False
 
     def __thread_starter(self):
-        #self.__EXIT_THREADS = Event()
-        #self.__WRITE = Event()
         self.__EXIT_THREADS.set() # Set to true
         self.__ReadList = deque() # Linked list, behaves similarly but more performant for this purpose
         self.__WriteList = deque()

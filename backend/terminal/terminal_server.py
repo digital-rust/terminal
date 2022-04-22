@@ -75,26 +75,21 @@ class TerminalServer():
             interface.def_interface['DISCONNECT']['input']['CMD_ID']['value']: self.SerialServer.close_serial_connection,
             interface.def_interface['SEND']['input']['CMD_ID']['value']: self.send_data(msg, cmd_sz),
         }
-        
-        # check if cmd id within cmd id ranges (NOT FOR PRODUCTION)
+
         try:
-            if (cmd_id != None) and (int(cmd_id) >= 0) and (int(cmd_id) <= 10):
+            if (int(cmd_id) >= 0) and (int(cmd_id) <= 10):
                 operation = command_operation.get(int(cmd_id), lambda: self.default(msg))
                 print(f'OPERATION: {operation}')
-                cmd_id = None
             else:
-                self.default(msg)
+                self.TCPServer.write_to_client(b"'" + bytes(msg) + b"'" + b" is not a valid command!")
             if operation != None:
                 operation()
-                operation = None
         except:
             pass
 
-    def send_data(self, msg, cmd_sz) -> int:
+    def send_data(self, msg, cmd_sz):
+        print('sending data fro mthe function somehow')
         self.SerialServer.write_to_serial(msg[cmd_sz:])
-
-    def default(self, msg):
-        self.TCPServer.write_to_client(b"'" + bytes(msg) + b"'" + b" is not a valid command!")
 
     def close(self):
         self.__RUN = False # Since other two are in context blocks should automatically be closed by with statement
