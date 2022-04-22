@@ -5,19 +5,7 @@ import platform
 from serial.serialutil import SerialException
 from terminal.serial_server import SerialServer
 from terminal.TCP_server import TCPServer
-
-class message_protocol():
-    """
-        # [bytearray[uint16 CmdType][unspec Msg]]
-    """
-
-    UINT16_T__TERM_ON_COM_CONNECT             = b'00'
-    UINT16_T__TERM_ON_PORT_DISCONNECT         = b'01'
-    UINT16_T__TERM_ON_PORT_REFRESH            = b'02'
-    UINT16_T__TERM_ON_BAUDRATE_CHANGE         = b'03'
-    UINT16_T__TERM_ON_TRANSMIT_DATA           = b'04'
-    UINT16_T__TERM_ON_REQUEST_PORTS           = b'05'
-    UINT16_T__TERM_ON_SHUTDOWN                = b'06'
+import terminal.interface as interface
 
 class TerminalServer():
 
@@ -41,7 +29,7 @@ class TerminalServer():
         stop_bits = 1 
         timeout = 1
         return virtual_port, baud_rate, byte_size, parity, stop_bits, timeout
-        
+
     def activate(self):
         # Main loop of program
         with self.TCPServer as FRONTEND:
@@ -53,7 +41,7 @@ class TerminalServer():
                     if(data == -1):
                         pass
                     else:
-                        data = self.parse_client_message(data) #parse msg
+                        data = self.parse_client_message(data) #parse msg according to interface definition
                         if not data:
                             pass
                         else:
@@ -67,47 +55,46 @@ class TerminalServer():
                             continue
                         else:
                             FRONTEND.write_to_client(data)
-    
-    def parse_client_message(self, msg):
-        cmd_id      = msg[:2]                   # command id
-        cmd_sz      = 2                         # command id size
+                    else:
+                        continue
 
-        # check legacy_parser for example on how to iteratively index a dict
-        if cmd_id == message_protocol.UINT16_T__TERM_ON_COM_CONNECT:
-            try:
-                self.SerialServer.create_serial_connection()
-            except SerialException:
-                connect_failure = f"""cannot connect to
-                port:     {self.SerialServer.virtual_port}
-                baudrate: {self.SerialServer.baud_rate}
-                bytesize: {self.SerialServer.byte_size}
-                parity:   {self.SerialServer.parity}
-                timeout:  {self.SerialServer.timeout}
-                hint: check device properly connected"""
-                for line in connect_failure.split('\n'):
-                    print(line)
-                self.TCPServer.write_to_client(bytes(connect_failure, "utf-8"))
-        elif cmd_id == message_protocol.UINT16_T__TERM_ON_PORT_DISCONNECT:
-            # call 'disconnect from port' logic
+    def parse_client_message(self, msg):
+        
+        #################################
+        # msg -> [uint16_cmd_type][msg] #
+        #################################
+        
+        # move below command_operation
+        cmd_id   = msg[:2]                   # command id
+        cmd_sz   = 2                         # command id size (bytes)
+
+        # python's equivalent to a switch statement - the dictionary
+        command_operation = {
+            interface.def_interface['SHUTDOWN']['input']['CMD_ID']['value']: self.close,
+            interface.def_interface['CONNECT']['input']['CMD_ID']['value'] : self.SerialServer.create_serial_connection,
+            interface.def_interface['DISCONNECT']['input']['CMD_ID']['value']: self.SerialServer.close_serial_connection,
+            interface.def_interface['SEND']['input']['CMD_ID']['value']: self.send_data(msg, cmd_sz),
+        }
+        
+        # check if cmd id within cmd id ranges (NOT FOR PRODUCTION)
+        try:
+            if (cmd_id != None) and (int(cmd_id) >= 0) and (int(cmd_id) <= 10):
+                operation = command_operation.get(int(cmd_id), lambda: self.default(msg))
+                print(f'OPERATION: {operation}')
+                cmd_id = None
+            else:
+                self.default(msg)
+            if operation != None:
+                operation()
+                operation = None
+        except:
             pass
-        elif cmd_id == message_protocol.UINT16_T__TERM_ON_PORT_REFRESH:
-            # call 'port refresh' logic
-            pass
-        elif cmd_id == message_protocol.UINT16_T__TERM_ON_BAUDRATE_CHANGE:
-            # call 'br change' logic
-            pass
-        elif cmd_id == message_protocol.UINT16_T__TERM_ON_TRANSMIT_DATA:
-            self.SerialServer.write_to_serial(msg[cmd_sz:])
-            pass
-        elif cmd_id == message_protocol.UINT16_T__TERM_ON_REQUEST_PORTS:
-            # call 'return available ports' logic
-            pass
-        elif cmd_id == message_protocol.UINT16_T__TERM_ON_SHUTDOWN:
-            print("SerialTerminalServer exiting")
-            self.close()
-            print("SerialTerminal exited")
-        else:
-            self.TCPServer.write_to_client(b"'" + bytes(msg) + b"'" + b" is not a valid command!")
+
+    def send_data(self, msg, cmd_sz) -> int:
+        self.SerialServer.write_to_serial(msg[cmd_sz:])
+
+    def default(self, msg):
+        self.TCPServer.write_to_client(b"'" + bytes(msg) + b"'" + b" is not a valid command!")
 
     def close(self):
         self.__RUN = False # Since other two are in context blocks should automatically be closed by with statement

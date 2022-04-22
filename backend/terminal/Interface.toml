@@ -14,7 +14,7 @@ title = "Interface Definition between Frontend Client and Backend Server"
     [POLL_PORTS.input]
         [POLL_PORTS.input.CMD_ID]
             type = "uint_16"
-            value = 1
+            value = 1 # FRONTEND EXCLUSIVE COMMAND
     [POLL_PORTS.output]
         [POLL_PORTS.output.RETCODE]
             type = "uint_8"

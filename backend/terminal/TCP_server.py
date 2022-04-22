@@ -50,9 +50,10 @@ class TCPServer():
                 # forever because nothing is ever written. 
             try:
                 data = self.__WriteList.popleft() # popleft So that it acts as a FIFO, not LIFO
-                print(f"TCPServer is writing: {data}")
-                self.conn.sendall(data) 
-                print(f"TCPServer successfully wrote: {data}")
+                if len(data) > 0:
+                    print(f"TCPServer is writing: {data}")
+                    self.conn.sendall(data) 
+                    print(f"TCPServer successfully wrote: {data}")
             except IndexError:
                 count += 1
         print("TCP Writer thread ended")

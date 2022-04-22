@@ -57,5 +57,5 @@ function createBridge() {
 /* exposes available virtual ports */
 function loadPorts(client: { onData: (arg0: string) => void; }): void {
     const ReqPortsPending = '05';
-    client.onData(ReqPortsPending);
+    //client.onData(ReqPortsPending);
 }
