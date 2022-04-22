@@ -68,9 +68,9 @@ class TerminalServer():
         cmd_id   = msg[:2]                   # command id
         cmd_sz   = 2                         # command id size (bytes)
 
-        # python's equivalent to a switch statement - the dictionary
         command_operation = {
             interface.def_interface['SHUTDOWN']['input']['CMD_ID']['value']: self.close,
+            #interface.def_interface['POLL_PORTS']['input']['CMD_ID']['value']: ,
             interface.def_interface['CONNECT']['input']['CMD_ID']['value'] : self.SerialServer.create_serial_connection,
             interface.def_interface['DISCONNECT']['input']['CMD_ID']['value']: self.SerialServer.close_serial_connection,
             interface.def_interface['SEND']['input']['CMD_ID']['value']: self.send_data(msg, cmd_sz),
@@ -88,7 +88,6 @@ class TerminalServer():
             pass
 
     def send_data(self, msg, cmd_sz):
-        print('sending data fro mthe function somehow')
         self.SerialServer.write_to_serial(msg[cmd_sz:])
 
     def close(self):
