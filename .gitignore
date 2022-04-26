@@ -1,3 +1,6 @@
+# [helper files for dev]
+helpful_docs
+
 .DS_Store
 .env
 .gclient_done

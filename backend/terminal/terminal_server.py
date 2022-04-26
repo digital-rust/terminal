@@ -59,6 +59,7 @@ class TerminalServer():
                         continue
 
     def parse_client_message(self, msg):
+        # TODO: separate parsing functionality from terminal server.
         
         #################################
         # msg -> [uint16_cmd_type][msg] #

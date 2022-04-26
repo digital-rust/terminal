@@ -26,7 +26,8 @@ class SerialServer():
         self.__EXIT_THREADS.set() # Set to true
         self.__ReadList = deque() # Linked list, behaves similarly but more performant for this purpose
         self.__WriteList = deque()
-        self.__reader_thread, self.__writer_thread = Thread(target=self.__start_reader_thread), Thread(target=self.__start_writer_thread)
+        # I don't think we need this. TODO test!
+        #self.__reader_thread, self.__writer_thread = Thread(target=self.__start_reader_thread), Thread(target=self.__start_writer_thread)
 
     def create_serial_connection(self):
 

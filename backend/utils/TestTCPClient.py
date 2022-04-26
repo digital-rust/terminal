@@ -7,6 +7,7 @@ from threading import Thread, Event
 import socket
 
 class TCPClient():
+    # TODO rewrite to fake testing client & move to /tests
 
     def __init__(self, host, port):
         self.host = host
