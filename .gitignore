@@ -1,3 +1,9 @@
+# add automatically generated package-lock.json
+package-lock.json
+
+# [helper files for dev]
+helpful_docs
+
 .DS_Store
 .env
 .gclient_done

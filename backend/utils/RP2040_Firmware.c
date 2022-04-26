@@ -54,11 +54,11 @@ int main() {
             if (chr == CR || i == (sizeof(msg) - 1)) {
                 msg[i] = TERMINATION;      // termination
                 flash_led(1);               // flash once on Rx
-                sleep_ms(250);             // delay to discern Rx from Tx blinks
+                sleep_ms(50);             // delay to discern Rx from Tx blinks
 
                 if (strcmp(msg, "reboot\n")==0 && strcmp(msg, "REBOOT\n")==0) {
-                    // flash LED 3 times before full reboot
-                    flash_led(3);
+                    // flash LED 5 times before full reboot
+                    flash_led(5);
                     reset_usb_boot(0,0);
                 } else {
                     sleep_ms(50);

@@ -29,11 +29,10 @@ class Bridge {
     /* display bridge metadata */
     onConnect(client: net.Socket): void {
         client.on('connect',(): void => {
-                console.log('#### connection details ####');
                 const port = client.localPort;
                 const family = client.remoteFamily;
                 const ipaddr = client.localAddress;
-                console.log(`electron attached on ${port} at ${ipaddr} as ${family}.`);
+                console.log(`bridge: \non ${port} \nat ${ipaddr} \nas ${family}.`);
             });
 
         client.on('drain', (): void => {

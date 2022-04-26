@@ -7,18 +7,62 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "start": "npm run build && electron ./build/main.js"
+    "start": "npm run build && electron ./build/main.js",
+    "dist": "./node_modules/.bin/electron-builder build -m -l -w"
   },
-  "repository": "https://github.com/makaveevognyan/terminal",
-  "keywords": ["serial", "terminal"],
-  "author": "",
-  "license": "",
+  "build": {
+    "appId": "yourappid",
+    "extends": null,
+    "files": [
+      "*.js",
+      "build",
+      "node_modules"
+    ],
+    "directories": {
+      "buildResources": "",
+      "app": ""
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "electron": "^17.0.1",
+    "electron-builder": "^23.0.3",
     "eslint": "^8.9.0",
-    "typescript": "^4.5.5"
+    "typescript": "^4.6.3"
   },
-  "dependencies": {}
+  "repository": "https://github.com/makaveevognyan/terminal",
+  "keywords": [
+    "serial",
+    "terminal"
+  ],
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "electron-builder-squirrel-windows": "^23.0.8"
+  }
 }
