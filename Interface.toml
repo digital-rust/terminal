@@ -52,7 +52,6 @@ title = "Interface Definition between Frontend Client and Backend Server"
         [SEND.output.RETCODE]
             type = "uint_8"
 
-        
 [SET_BAUD_RATE] # Set's the baud rate state of SerialServer
     [SET_BAUD_RATE.input]
         [SET_BAUD_RATE.input.CMD_ID]
@@ -63,4 +62,3 @@ title = "Interface Definition between Frontend Client and Backend Server"
     [SET_BAUD_RATE.output]
         [SET_BAUD_RATE.output.RETCODE]
             type = "uint_8"
-

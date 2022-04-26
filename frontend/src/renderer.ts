@@ -8,30 +8,45 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Bridge = require('../build/network');
 
-// HTML Elements
-const refresh = document.getElementById("refresh_com_port");
-const connect = document.getElementById("connect_com_port");
-const send = document.getElementById("send_data");
-const receive = document.getElementById("queryText");
-const user_data = document.getElementById("data_tx") as HTMLInputElement;
-
-// instantiate a TCP client for the session [LEGACY]
-const client = createBridge();
-
-onRx(client);
-
-// load available ports
-loadPorts(client);
-
-refresh.addEventListener('click', () => {console.log('TODO: refresh available com port\n');});
-connect.addEventListener('click', () => {console.log('TODO: connect to com port\n');});
-send.addEventListener('click', () => client.onData(user_data.value));
-
-// not sure if needs be async
-async function onRx(client: { onRxData: (arg0: HTMLElement) => void; }): Promise<void>{
-    client.onRxData(receive);
+/* interface definition | note: this can be refactored to instead parse the toml definition file*/
+enum Interface {
+    SHUTDOWN        = 0,
+    POLL_PORTS      = 1,
+    CONNECT         = 2,
+    DISCONNECT      = 3,
+    SEND            = 4,
+    SET_BAUD_RATE   = 5,
 }
 
+// HTML Elements
+const refresh   = document.getElementById("refresh_com_port");                // 'REFRESH' button
+const connect   = document.getElementById("connect_com_port");                // 'CONNECT' button
+const send      = document.getElementById("send_data");                       // 'SEND' data button
+const receive   = document.getElementById("queryText");                       // 'RECEIVE' data box
+const user_data = document.getElementById("data_tx") as HTMLInputElement;     // 'SEND' data input box
+const client    = createBridge();                                             // instantiate interface bridge
+
+onRx(client);       // check for received data
+loadPorts(client);  // load available ports
+
+refresh.addEventListener('click', (): void => {
+    // cmd_id from messaging prot + appendage
+    console.log('TODO: refresh available com port\n');
+});
+connect.addEventListener('click', (): void => {
+    // cmd_id from messaging prot + appendage
+    console.log('TODO: connect to com port\n');
+});
+send.addEventListener('click', (): void => {
+    // cmd_id from messaging prot + appendage
+    return client.onData(user_data.value);
+}); // only need to listen for this event in case 'connected'!
+
+/* 'listens' for incoming data */
+async function onRx(client: { onRxData: (arg0: HTMLElement) => void; }): Promise<void>{
+    client.onRxData(receive);}
+
+/* constructs an interface bridge */
 function createBridge() {
     const backend_addr = '127.0.0.1';
     const backend_port = 5651;
@@ -39,6 +54,7 @@ function createBridge() {
     return client;
 }
 
+/* exposes available virtual ports */
 function loadPorts(client: { onData: (arg0: string) => void; }): void {
     const ReqPortsPending = '05';
     client.onData(ReqPortsPending);

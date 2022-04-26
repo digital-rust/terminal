@@ -34,7 +34,7 @@ class TerminalServer():
         return TCP_HOST, TCP_PORT
 
     def default_Serial(self):
-        virtual_port = '/dev/tty.usbmodem1101' #some tty
+        virtual_port = '/dev/tty.usbmodem11101' #some tty
         baud_rate = 115200 
         byte_size = 8
         parity = 'N' 

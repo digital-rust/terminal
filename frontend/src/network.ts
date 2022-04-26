@@ -1,4 +1,4 @@
-// frontend<->backend bridge
+// interface module (transparent to messaging protocol)
 
 import net = require("net");
 import { Buffer } from 'buffer';
@@ -8,6 +8,7 @@ class Bridge {
     port: number;
     client: net.Socket;
 
+    /* construct bridge and connect */
     constructor({ host, port }: { host: string; port: number; }) {
         
         this.host = host;
@@ -25,26 +26,29 @@ class Bridge {
         this.onConnect(this.client);
     }
     
+    /* display bridge metadata */
     onConnect(client: net.Socket): void {
         client.on('connect',(): void => {
-                console.log('--------------client details -----------------');
+                console.log('#### connection details ####');
                 const port = client.localPort;
                 const family = client.remoteFamily;
                 const ipaddr = client.localAddress;
-                console.log(`electron attached on ${port} at ${ipaddr} as ${family}`);
+                console.log(`electron attached on ${port} at ${ipaddr} as ${family}.`);
             });
 
         client.on('drain', (): void => {
-                console.log("DRAIN");
+                console.log("Empty write buffer.");
             });
-
+        
+        /* sets encoding for data readable from stream */
         this.setEncoding();
 
         client.on('end', (): void => {
-                console.log("END");
+                console.log("Bridge destroyed.");
             });
     }
 
+    /* callback on received data */
     onRxData(input_element: HTMLInputElement): void {
         this.client.on('data', (rx_data): void => {
                 // frontend parsing logic here
@@ -59,11 +63,12 @@ class Bridge {
     }
 
     setEncoding(): void {
-        //console.log("setEncoding");
         this.client.setEncoding('utf8');
     }
 
+    /* callback on sent data */
     onData(data: string): void {
+
         // attempt data transfer
         if (this.client.writable) {
             try {

@@ -4,12 +4,41 @@
 
 body {
     background-color: rgb(0, 0, 0);
+    font-family: 'Courier New', monospace;
 }
 
 h1 {
     color: rgb(24, 150, 51);
 }
 
-#rx_txt {
+.textarea {
     color: rgb(236, 122, 122);
+    display: flex;
+    height: 50%;
+    width: 30%;
+    max-height: 800;
+    max-width: 600;
+}
+
+.button {
+    font-family: 'Courier New', monospace;
+    display: flexbox;
+    outline: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 12px;
+    line-height: 20px;
+    height: 30px;
+    max-height: 30px;
+    background: #fff;
+    font-weight: 700;
+    border: 2px solid #DAE3F3;
+    border-radius: 0;
+    color: #272C34;
+    transition-timing-function: ease-in-out;
+    transition-property: box-shadow;
+    transition-duration: 150ms;
+}
+:hover {
+    box-shadow: 0 2px 2px rgb(39 44 52 / 12%);
 }
