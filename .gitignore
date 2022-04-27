@@ -1,3 +1,7 @@
+# distribution-related files
+fordist.py
+setup.py
+
 # add automatically generated package-lock.json
 package-lock.json
 
