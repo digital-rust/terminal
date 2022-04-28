@@ -7,38 +7,29 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Bridge = require('../build/network');
-
-/* interface definition | note: this can be refactored to instead parse the toml definition file*/
-enum Interface {
-    SHUTDOWN        = 0,
-    POLL_PORTS      = 1,
-    CONNECT         = 2,
-    DISCONNECT      = 3,
-    SEND            = 4,
-    SET_BAUD_RATE   = 5,
-}
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const portfinder = require('portfinder');
 
 // HTML Elements
 const refresh   = document.getElementById("refresh_com_port");                // 'REFRESH' button
 const connect   = document.getElementById("connect_com_port");                // 'CONNECT' button
 const send      = document.getElementById("send_data");                       // 'SEND' data button
 const receive   = document.getElementById("queryText");                       // 'RECEIVE' data box
-const user_data = document.getElementById("data_tx") as HTMLInputElement;     // 'SEND' data input box
-const client    = createBridge();                                             // instantiate interface bridge
-
+const user_data = document.getElementById("data_tx") as HTMLInputElement;
+   
+const client = createBridge();
+initBridge(client);
+                                      // instantiate interface bridge
 onRx(client);       // check for received data
 loadPorts(client);  // load available ports
 
 refresh.addEventListener('click', (): void => {
-    // cmd_id from messaging prot + appendage
     console.log('TODO: refresh available com port\n');
 });
 connect.addEventListener('click', (): void => {
-    // cmd_id from messaging prot + appendage
     console.log('TODO: connect to com port\n');
 });
 send.addEventListener('click', (): void => {
-    // cmd_id from messaging prot + appendage
     return client.onData(user_data.value);
 }); // only need to listen for this event in case 'connected'!
 
@@ -48,10 +39,20 @@ async function onRx(client: { onRxData: (arg0: HTMLElement) => void; }): Promise
 
 /* constructs an interface bridge */
 function createBridge() {
-    const backend_addr = '127.0.0.1';
-    const backend_port = 5651;
-    const client = new Bridge.Bridge({ host: backend_addr, port: backend_port })
+    const client = new Bridge.Bridge();
     return client;
+}
+
+function initBridge(client) { 
+    // find a free TCP port
+    // TODO: impolement the Promise version to remove racing probability
+    portfinder.getPort(function (err, port) {
+        client.initHost('127.0.0.1');
+        client.initPort(port);
+        console.log('after initing host and port but before connecting')
+        console.log('send host and port to main process to boot up the backend here')
+        client.initConnect(client);
+    })
 }
 
 /* exposes available virtual ports */

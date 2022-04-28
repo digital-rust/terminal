@@ -50,13 +50,13 @@ function createWindow (): void {
 
     // initialize python backend
     // TODO check for open TCP port and pass that as arg to backend so it loads up on it and then connect
-    const opt = () => {
-        execFile(path.join(__dirname,'dist/fordist.app/Contents/MacOS/fordist'), function (err, data) {
+    function backend_handler() {
+        execFile(path.join(__dirname, 'dist/fordist.app/Contents/MacOS/fordist'), function (err, data) {
             console.log(err);
             console.log(data.toString());
         });
     }
-    opt();
+    //backend_handler();
 
     // open devtools
     mainWindow.webContents.openDevTools()
@@ -81,7 +81,8 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function (): void {
-  if (process.platform !== 'darwin') app.quit()
+  //if (process.platform !== 'darwin') 
+  app.quit();
 })
 
 // In this file you can include the rest of your app's specific main process

@@ -8,13 +8,26 @@ class Bridge {
     port: number;
     client: net.Socket;
 
-    /* construct bridge and connect */
-    constructor({ host, port }: { host: string; port: number; }) {
-        
-        this.host = host;
-        this.port = port;
+    /* construct socket*/
+    constructor() {
         this.client = new net.Socket();
-        
+    }
+
+    // init socket host
+    initHost(host: string): void {
+        console.log('initing host ' + host)
+        this.host = host;
+        console.log(this.host)
+    }
+    // init socket port
+    initPort(port: number): void {
+        console.log('initing port ' + port)
+        this.port = port;
+        console.log(this.port)
+    }
+
+    // init connection
+    initConnect(client: net.Socket): void {
         try {
             this.client.connect({
                 port: this.port,
@@ -25,7 +38,7 @@ class Bridge {
         }
         this.onConnect(this.client);
     }
-    
+
     /* display bridge metadata */
     onConnect(client: net.Socket): void {
         client.on('connect',(): void => {

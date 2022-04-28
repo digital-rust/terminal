@@ -63,6 +63,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "electron-builder-squirrel-windows": "^23.0.8"
+    "electron-builder-squirrel-windows": "^23.0.8",
+    "portfinder": "^1.0.28"
   }
 }
