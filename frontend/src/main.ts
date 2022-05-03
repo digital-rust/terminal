@@ -1,33 +1,56 @@
 // MAIN PROC
-// Modules to control application life and create native browser window
-import { app, BrowserWindow, Menu } from "electron";
+// TODO: FIX THE GOD DAMN CLOSE EVENTS ON BOTH THE WINDOW AND THE APP APIS
+
+import { app, BrowserWindow, Menu, ipcMain } from "electron";
 import * as path from "path";
 import { execFile } from "child_process";
+import * as defs from "../build/ipc_defs"
 
-function createMenu(): void {
-    const template = [
-        { label: app.name,
+const force_quit = false;
+
+function createMenu(){
+    // custom menu call and set as default menu
+    // TODO: test accelerators + roles
+    const mainMenu = Menu.buildFromTemplate( [
+        {label: app.name,
                     submenu: [
-                        {label:'exit'},
-                        {label:'preferences'},
+                        {label:'preferences', accelerator:'CommandOrControl+I'}, //custom on click function execution
+                        {label:'refresh', accelerator:'CommandOrControl+R', role:'reload'},
+                        {label:'refresh_ignore_cache', accelerator:'CommandOrControl+F+R', role:'forceReload'},
+                        {label:'quit', accelerator:'CommandOrControl+Q', role:'quit'},
+                    ]},
+
+        {label:'edit',
+                    submenu: [
+                        {label:'undo', accelerator:'CommandOrControl+Z', role:'undo'},
+                        {label:'redo', accelerator:'CommandOrControl+Y', role:'redo'},
                     ]},
 
         {label:'view',
                     submenu: [
-                        {label: 'a'},
-                        {label: 'b'},
+                        {label: 'minimize', accelerator:'CommandOrControl+-', role:'minimize'},
                     ]},
 
         {label:'help',
                     submenu: [
-                        {label: 'a'},
-                        {label: 'b'},
+                        {label: 'info'}, // custom on click function execution (help information about the app)
+                        {label: 'about', accelerator:'Shift+~', role:'about'},
                     ]}
-    ]; 
-
-    // custom menu call and set as default menu
-    const mainMenu = Menu.buildFromTemplate(template);
+    ]);
     Menu.setApplicationMenu(mainMenu);
+}
+
+function backendHandler(port) {
+    const fh = execFile(path.join(__dirname, 'dist/fordist.app/Contents/MacOS/fordist'), function (err, data) {
+        console.log(err);
+        console.log(data.toString());
+    });
+    return fh;
+}
+
+function closeBackend(mainWindow: BrowserWindow) {
+    // send a message to the renderer process to shutdown the backend ('00')
+    mainWindow.webContents.send(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, {'SAVED': 'File Saved'});
 }
 
 function createWindow (): void {
@@ -45,21 +68,23 @@ function createWindow (): void {
     }
   })
 
-    // load the index.html of the app
-    mainWindow.loadFile(path.join(__dirname, 'index.html'))
+    mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-    // initialize python backend
-    // TODO check for open TCP port and pass that as arg to backend so it loads up on it and then connect
-    function backend_handler() {
-        execFile(path.join(__dirname, 'dist/fordist.app/Contents/MacOS/fordist'), function (err, data) {
-            console.log(err);
-            console.log(data.toString());
-        });
-    }
-    //backend_handler();
+    ipcMain.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
+        console.log('received free TCP port from renderer proc ' + arg);
+        const fh = backendHandler(arg);
+    })
 
-    // open devtools
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
+
+    // Continue to handle mainWindow "close" event here
+    mainWindow.on('close', function(e){
+        console.log('window-close event is triggered')
+        //if(!force_quit){
+        //    e.preventDefault();    
+            // closeBackend(mainWindow); IPC to renderer to close
+        //}
+    });
 }
 
 // This method will be called when Electron has finished
@@ -81,9 +106,28 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function (): void {
-  //if (process.platform !== 'darwin') 
-  app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit(); // shutdown app as all windows closed even on macOS for now
+  }
+  // shutdown backend before quitting the application
+  console.log('window-all-closed event is triggered');
 })
+
+// This is another place to handle events after all windows are closed
+app.on('will-quit', function () {
+    // This is a good place to add tests insuring the app is still
+    // responsive and all windows are closed.
+    console.log('will-quit event is triggered');
+});
+
+// You can use 'before-quit' instead of (or with) the close event
+app.on('before-quit', function (e) {
+    // Handle menu-item or keyboard shortcut quit here
+    //if(!force_quit){
+    //    e.preventDefault();
+    //}
+    console.log('before-quit event is triggered');
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

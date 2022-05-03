@@ -8,8 +8,6 @@ h1 {
 }
 
 .textarea {
-    color: rgb(236, 122, 122);
-    display: flex;
     height: 80%;
     width: 45%;
     max-height: 800;
@@ -17,23 +15,7 @@ h1 {
 }
 
 .button {
-    font-family: 'Courier New', monospace;
-    display: flexbox;
-    outline: none;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 0 12px;
-    line-height: 20px;
-    height: 30px;
-    max-height: 30px;
-    background: #fff;
-    font-weight: 700;
-    border: 2px solid #DAE3F3;
-    border-radius: 0;
-    color: #272C34;
-    transition-timing-function: ease-in-out;
-    transition-property: box-shadow;
-    transition-duration: 150ms;
+    
 }
 
 :hover {

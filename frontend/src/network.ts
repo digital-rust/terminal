@@ -3,6 +3,8 @@
 import net = require("net");
 import { Buffer } from 'buffer';
 
+// interface definition toml file parse logic here
+
 class Bridge {
     host: string;
     port: number;
@@ -15,19 +17,18 @@ class Bridge {
 
     // init socket host
     initHost(host: string): void {
-        console.log('initing host ' + host)
+        console.log('initializing host ' + host)
         this.host = host;
         console.log(this.host)
     }
     // init socket port
     initPort(port: number): void {
-        console.log('initing port ' + port)
+        console.log('initializing port ' + port)
         this.port = port;
-        console.log(this.port)
     }
 
     // init connection
-    initConnect(client: net.Socket): void {
+    initConnect(): void {
         try {
             this.client.connect({
                 port: this.port,
@@ -51,7 +52,7 @@ class Bridge {
         client.on('drain', (): void => {
                 console.log("Empty write buffer.");
             });
-        
+
         /* sets encoding for data readable from stream */
         this.setEncoding();
 
@@ -80,7 +81,6 @@ class Bridge {
 
     /* callback on sent data */
     onData(data: string): void {
-
         // attempt data transfer
         if (this.client.writable) {
             try {

@@ -9,6 +9,10 @@
 const Bridge = require('../build/network');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const portfinder = require('portfinder');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { ipcRenderer } = require('electron');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const defs = require('../build/ipc_defs')
 
 // HTML Elements
 const refresh   = document.getElementById("refresh_com_port");                // 'REFRESH' button
@@ -19,10 +23,10 @@ const user_data = document.getElementById("data_tx") as HTMLInputElement;
    
 const client = createBridge();
 initBridge(client);
-                                      // instantiate interface bridge
+
 onRx(client);       // check for received data
 loadPorts(client);  // load available ports
-
+endSessionKillBackend();
 refresh.addEventListener('click', (): void => {
     console.log('TODO: refresh available com port\n');
 });
@@ -45,18 +49,27 @@ function createBridge() {
 
 function initBridge(client) { 
     // find a free TCP port
-    // TODO: impolement the Promise version to remove racing probability
     portfinder.getPort(function (err, port) {
         client.initHost('127.0.0.1');
         client.initPort(port);
-        console.log('after initing host and port but before connecting')
-        console.log('send host and port to main process to boot up the backend here')
-        client.initConnect(client);
+        ipcRenderer.send(defs.BCKEND_SPWN_TCPPORT_CHANNEL, port);
+        client.initConnect();
     })
+}
+
+function endSessionKillBackend() {
+    // 1. ipc receive kill backend channel
+    // 2. send the shutdown command to the backend
+    ipcRenderer.on(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, shutdown);
 }
 
 /* exposes available virtual ports */
 function loadPorts(client: { onData: (arg0: string) => void; }): void {
     const ReqPortsPending = '05';
     //client.onData(ReqPortsPending);
+}
+
+function shutdown() {
+    console.log('closing backend msg from main')
+    return client.onData('00'); //hardcoded, swap it with the cmd from the interface definition
 }
