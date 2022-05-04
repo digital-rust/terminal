@@ -37,6 +37,7 @@ class Bridge {
         } catch (error) {
             console.log('bridge to backend node could not be built', error);
         }
+        console.log('connecting to > ', this.host, this.port)
         this.onConnect(this.client);
     }
 

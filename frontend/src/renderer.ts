@@ -9,6 +9,8 @@
 const Bridge = require('../build/network');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const portfinder = require('portfinder');
+portfinder.basePort = 3000;    // default: 8000
+portfinder.highestPort = 4000; // default: 65535
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require('electron');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -24,9 +26,11 @@ const user_data = document.getElementById("data_tx") as HTMLInputElement;
 const client = createBridge();
 initBridge(client);
 
+
 onRx(client);       // check for received data
 loadPorts(client);  // load available ports
-endSessionKillBackend();
+//endSessionKillBackend();
+
 refresh.addEventListener('click', (): void => {
     console.log('TODO: refresh available com port\n');
 });
@@ -48,12 +52,18 @@ function createBridge() {
 }
 
 function initBridge(client) { 
-    // find a free TCP port
     portfinder.getPort(function (err, port) {
-        client.initHost('127.0.0.1');
-        client.initPort(port);
+
         ipcRenderer.send(defs.BCKEND_SPWN_TCPPORT_CHANNEL, port);
-        client.initConnect();
+
+        ipcRenderer.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
+            client.initHost('127.0.0.1');
+            client.initPort(port);
+            console.log(`BACKEND IS INDEED INITIALIZED AND NOW WE CONNECT TO IT${port}`)
+            
+            connectBridge(client);
+            
+        })
     })
 }
 
@@ -72,4 +82,15 @@ function loadPorts(client: { onData: (arg0: string) => void; }): void {
 function shutdown() {
     console.log('closing backend msg from main')
     return client.onData('00'); //hardcoded, swap it with the cmd from the interface definition
+}
+
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function connectBridge(client) {
+    await sleep(500);
+    client.initConnect();
 }

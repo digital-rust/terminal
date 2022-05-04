@@ -9,8 +9,9 @@ import terminal.interface as interface
 
 class TerminalServer():
 
-    def __init__(self):
+    def __init__(self, tcp_port):
         #default args just set for now to make my life easier
+        self.TCP_PORT = int(tcp_port)
         self.working_machine = platform.system()
         self.TCPServer = TCPServer(*self.default_TCP())
         self.SerialServer = SerialServer(*self.default_Serial())
@@ -18,7 +19,7 @@ class TerminalServer():
 
     def default_TCP(self):
         TCP_HOST = '127.0.0.1'
-        TCP_PORT = 5651
+        TCP_PORT = self.TCP_PORT
         return TCP_HOST, TCP_PORT
 
     def default_Serial(self):
