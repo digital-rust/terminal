@@ -1,10 +1,9 @@
-// MAIN PROC
-// TODO: FIX THE GOD DAMN CLOSE EVENTS ON BOTH THE WINDOW AND THE APP APIS
-
 import { app, BrowserWindow, Menu, ipcMain } from "electron";
 import * as path from "path";
 import { execFile } from "child_process";
 import * as defs from "../build/ipc_defs"
+
+// TODO: refactor child process handler into an object
 
 function createMenu(){
     // custom menu call and set as default menu
@@ -53,28 +52,26 @@ function backendHandler(port) {
 }
 
 function createWindow (): void {
-  // create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     minWidth: 800,
     minHeight: 600,
     webPreferences: {
-        devTools: true,          // disable for pre-production and release
+        devTools: true, // disable for pre-production and release
         nodeIntegration: true,
         contextIsolation: false,
         preload: path.join(__dirname, './preload.js')
     }
   })
-
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     ipcMain.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
         console.log(`received free TCP port from renderer proc ${arg}`);
-        const a = backendHandler(arg);
+        backendHandler(arg);
         event.reply(defs.BCKEND_SPWN_TCPPORT_CHANNEL ,'backend is initialized')
     })
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools(); // disable for pre-production and release
 
     // Continue to handle mainWindow "close" event here
     mainWindow.on('close', function(){
