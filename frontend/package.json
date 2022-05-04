@@ -1,6 +1,6 @@
 {
   "name": "terminal",
-  "version": "0.0.5-a",
+  "version": "0.0.6-a",
   "description": "the serial terminal that does not suck",
   "main": "./build/main.js",
   "scripts": {

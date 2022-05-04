@@ -22,14 +22,17 @@ const connect   = document.getElementById("connect_com_port");                //
 const send      = document.getElementById("send_data");                       // 'SEND' data button
 const receive   = document.getElementById("queryText");                       // 'RECEIVE' data box
 const user_data = document.getElementById("data_tx") as HTMLInputElement;
-   
+
+// Global Renderer Events
+ipcRenderer.on(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, shutdown);
+
+// Backend Bridge
 const client = createBridge();
 initBridge(client);
 
 
 onRx(client);       // check for received data
 loadPorts(client);  // load available ports
-//endSessionKillBackend();
 
 refresh.addEventListener('click', (): void => {
     console.log('TODO: refresh available com port\n');
@@ -67,12 +70,6 @@ function initBridge(client) {
     })
 }
 
-function endSessionKillBackend() {
-    // 1. ipc receive kill backend channel
-    // 2. send the shutdown command to the backend
-    ipcRenderer.on(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, shutdown);
-}
-
 /* exposes available virtual ports */
 function loadPorts(client: { onData: (arg0: string) => void; }): void {
     const ReqPortsPending = '05';
@@ -80,17 +77,15 @@ function loadPorts(client: { onData: (arg0: string) => void; }): void {
 }
 
 function shutdown() {
-    console.log('closing backend msg from main')
+    console.error('closing backend msg from main')
     return client.onData('00'); //hardcoded, swap it with the cmd from the interface definition
 }
-
-
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function connectBridge(client) {
-    await sleep(500);
+    await sleep(600);
     client.initConnect();
 }

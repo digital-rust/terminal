@@ -45,20 +45,11 @@ function backendHandler(port) {
     const fh = execFile(path.join(__dirname, 'dist/fordist.app/Contents/MacOS/fordist'), [portStr], function (error, stdout, stderr) {
         if (error) {
             console.log(error);
-            throw error;
         }
         console.log(stdout);
         console.log(stderr)
-        
-        //console.log(err);
-        //console.log(data.toString());
     });
     return fh;
-}
-
-function closeBackend(mainWindow: BrowserWindow) {
-    // send a message to the renderer process to shutdown the backend ('00')
-    mainWindow.webContents.send(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, {'SAVED': 'File Saved'});
 }
 
 function createWindow (): void {
@@ -83,7 +74,6 @@ function createWindow (): void {
         const a = backendHandler(arg);
         event.reply(defs.BCKEND_SPWN_TCPPORT_CHANNEL ,'backend is initialized')
     })
-
     mainWindow.webContents.openDevTools();
 
     // Continue to handle mainWindow "close" event here
@@ -91,8 +81,7 @@ function createWindow (): void {
         console.log('window-close event is triggered')
         //if(!force_quit){
         //    e.preventDefault();    
-        closeBackend(mainWindow); //IPC to renderer to close
-        //}
+        mainWindow.webContents.send(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, {'SAVED': 'File Saved'});
     });
 }
 
@@ -115,9 +104,9 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function (): void {
-  //if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit(); // shutdown app as all windows closed even on macOS for now
-  //}
+  }
   // shutdown backend before quitting the application
   console.log('window-all-closed event is triggered');
 })

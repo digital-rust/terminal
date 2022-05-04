@@ -5,7 +5,7 @@
     <!--<img src="images/logo.png" alt="Logo" width="80" height="80"> -->
   </a>
 
-  <h3 align="center">terminal 0.0.5-a [pre-release]</h3>
+  <h3 align="center">terminal 0.0.6-a [pre-release]</h3>
 
   <p align="center">
     a simple serial terminal that simply doesn't suck
