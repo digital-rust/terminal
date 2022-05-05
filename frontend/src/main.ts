@@ -61,8 +61,8 @@ function backendHandler(port) {
 function createWindow (): void {const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    minWidth: 800,
-    minHeight: 600,
+    minWidth: 400,
+    minHeight: 300,
     webPreferences: {
         devTools: true, // disable for pre-production and release
         nodeIntegration: true,
