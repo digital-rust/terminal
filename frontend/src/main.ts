@@ -18,8 +18,8 @@ function createMenu(){
         {label: app.name,
                     submenu: [
                         {label:'preferences', accelerator:'CommandOrControl+I'}, //custom on click function execution
-                        {label:'refresh', accelerator:'CommandOrControl+R', role:'reload'},
-                        {label:'refresh_ignore_cache', accelerator:'CommandOrControl+F+R', role:'forceReload'},
+                        //{label:'refresh', accelerator:'CommandOrControl+R', role:'reload'}, // refreshing just opens another process with a new port - NOT GOOD
+                        //{label:'refresh_ignore_cache', accelerator:'CommandOrControl+F+R', role:'forceReload'},
                         {label:'quit', accelerator:'CommandOrControl+Q', role:'quit'},
                     ]},
 
@@ -113,11 +113,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function (): void {
     console.log('window-all-closed event is triggered');
   //if (process.platform !== 'darwin') {
-
-
-    //PIDArray.forEach(function(proc) {
-    //    proc.kill();
-    //});
     //app.quit(); // shutdown app as all windows closed even on macOS for now
   //}
   // shutdown backend before quitting the application
@@ -143,5 +138,12 @@ app.on('before-quit', function (e) {
 // code. You can also put them in separate files and require them here.
 ipcMain.on('closed', _ => {
     state = State.SHUTTING_DOWN;
+    try {
+    PIDArray.forEach(function(proc) {
+        process.kill(proc);
+    });
+    } catch (error) {
+        console.error(error);
+    }
     app.quit();
 })

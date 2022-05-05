@@ -123,7 +123,7 @@ function loadPorts(client: { onData: (arg0: string) => void; }): void {
 
 async function shutdown() {
     await client.onData('00'); // hardcoded, swap it with the cmd from the interface definition
-    await sleep(800);          // sleeps must be removed and instead block (await) where synchronicity is required
+    await sleep(1200);          // sleeps must be removed and instead block (await) where synchronicity is required
     client = null;
     ipcRenderer.send('closed'); // add to ipc_defs.ts
 }
