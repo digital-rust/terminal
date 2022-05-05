@@ -36,11 +36,10 @@ main {
 
 /*navbar*/
 .navbar {
+    height: 100%;
     position: fixed;
     background-color: var(--bg-primary);
-    transition: width 600ms ease;
-    /*overflow: scroll;*/
-    height: 100%;
+    transition: width 200ms ease;
 }
 .navbar-nav {
     list-style: none;
@@ -99,5 +98,43 @@ main {
     text-transform: uppercase;
     letter-spacing: 0.3ch;
     width: 100%;
+}
+/*-------------------------------------------------------*/
+
+/*small screens just in case*/
+@media only screen and (max-width: 600px) {
+    .navbar {
+        bottom: 0;
+        width: 100vw;
+        height: 5rem;
+    }
+    .logo {
+        display: none;
+    }
+    .navbar-nav {
+        flex-direction: row;
+    }
+    .nav-link {
+        justify-content: center;
+    }
+    main {
+        margin: 0;
+    }
+}
+
+/*large screens just in case*/
+@media only screen and (min-width: 600px) {
+    .navbar {
+        top: 0;
+        width: 5rem;
+        height: 100vh;
+    }
+    .navbar:hover {
+        width: 13rem;
+    }
+    .navbar:hover .link-text {
+        display: inline;
+        transition: opacity var(--transition-speed);
+    }
 }
 /*-------------------------------------------------------*/
