@@ -130,7 +130,7 @@ main {
         height: 100vh;
     }
     .navbar:hover {
-        width: 13rem;
+        width: 15rem;
     }
     .navbar:hover .link-text {
         display: inline;
