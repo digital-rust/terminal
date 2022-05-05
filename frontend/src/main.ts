@@ -3,7 +3,13 @@ import * as path from "path";
 import { execFile } from "child_process";
 import * as defs from "../build/ipc_defs"
 
-// TODO: refactor child process handler into an object
+// GLOBALS
+const PIDArray = [];        // general array containing spawned processes IDs
+let state = 0;              // initial app state
+enum State {                // state struct
+    ON             = 0,
+    SHUTTING_DOWN  = 1
+}
 
 function createMenu(){
     // custom menu call and set as default menu
@@ -46,13 +52,13 @@ function backendHandler(port) {
             console.log(error);
         }
         console.log(stdout);
-        console.log(stderr)
+        console.log(stderr);
     });
+    PIDArray.push(fh.pid) // keep track of the child proc ID to kill it on quit
     return fh;
 }
 
-function createWindow (): void {
-  const mainWindow = new BrowserWindow({
+function createWindow (): void {const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     minWidth: 800,
@@ -74,11 +80,15 @@ function createWindow (): void {
     mainWindow.webContents.openDevTools(); // disable for pre-production and release
 
     // Continue to handle mainWindow "close" event here
-    mainWindow.on('close', function(){
-        console.log('window-close event is triggered')
-        //if(!force_quit){
-        //    e.preventDefault();    
-        mainWindow.webContents.send(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, {'SAVED': 'File Saved'});
+    mainWindow.on('close', function(event){
+        console.log('window-close event is triggered');
+        if (state == State.ON) {
+            if (mainWindow) {
+                event.preventDefault();
+                mainWindow.webContents.send(defs.BCKEND_SHUTDOWN_ONAPP_QUIT);
+                mainWindow.close;
+            }
+        }
     });
 }
 
@@ -101,11 +111,16 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function (): void {
-  if (process.platform !== 'darwin') {
-    app.quit(); // shutdown app as all windows closed even on macOS for now
-  }
+    console.log('window-all-closed event is triggered');
+  //if (process.platform !== 'darwin') {
+
+
+    //PIDArray.forEach(function(proc) {
+    //    proc.kill();
+    //});
+    //app.quit(); // shutdown app as all windows closed even on macOS for now
+  //}
   // shutdown backend before quitting the application
-  console.log('window-all-closed event is triggered');
 })
 
 // This is another place to handle events after all windows are closed
@@ -126,3 +141,7 @@ app.on('before-quit', function (e) {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+ipcMain.on('closed', _ => {
+    state = State.SHUTTING_DOWN;
+    app.quit();
+})

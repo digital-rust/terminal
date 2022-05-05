@@ -95,15 +95,16 @@ here is why [most are under dev]:
 - [ ] handle exception if frontend not able to connect to backend node
 - [ ] handle exceptions if frontend msgs cannot be sent to backend node
 - [ ] frameless window
-- [ ] custom menu
+- [x] custom menu
 - [ ] fix interface messaging (cmd id needs to be appended to the data message from the FE)
-- [ ] couple frontend to backend processes
-  - [ ] spawn backend in main
-  - [ ] gracefully close (send exit cmd) backend on app exit
-- [ ] refactor events
+- [x] couple frontend to backend processes
+  - [x] spawn backend in main
+  - [x] gracefully close (send exit cmd) backend on app exit
+- [x] refactor events
+- [ ] clean up package.json from scrapped packages
 
 miscellaneous
-- [ ] establish main<->render IPC for full control (+flexible tracking/debugging via logs etc.) of internal messaging 
+- [x] establish main<->render IPC for full control (+flexible tracking/debugging via logs etc.) of internal messaging 
 - [ ] consider small notification system (+enable/disable feature), notifying of app behaviour
 - [ ] complete documenting 'Getting Started' w/ latest additions (TS, ESLint, etc..)
 

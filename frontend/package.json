@@ -64,6 +64,7 @@
   "license": "",
   "dependencies": {
     "electron-builder-squirrel-windows": "^23.0.8",
+    "portastic": "^1.0.1",
     "portfinder": "^1.0.28"
   }
 }

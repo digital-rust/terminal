@@ -9,12 +9,18 @@
 const Bridge = require('../build/network');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const portfinder = require('portfinder');
-portfinder.basePort = 3000;    // default: 8000
-portfinder.highestPort = 4000; // default: 65535
+portfinder.basePort = 8000;    // default: 8000
+portfinder.highestPort = 65535; // default: 65535
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const portastic = require('portastic');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { ipcRenderer } = require('electron');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const defs = require('../build/ipc_defs')
+const defs = require('../build/ipc_defs');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const net = require('net');
 
 // HTML Elements
 const refresh   = document.getElementById("refresh_com_port");                // 'REFRESH' button
@@ -27,9 +33,9 @@ const user_data = document.getElementById("data_tx") as HTMLInputElement;
 ipcRenderer.on(defs.BCKEND_SHUTDOWN_ONAPP_QUIT, shutdown);
 
 // Backend Bridge
-const client = createBridge();
+let client = createBridge();
 initBridge(client);
-
+connectBridge(client);
 
 onRx(client);       // check for received data
 loadPorts(client);  // load available ports
@@ -54,21 +60,60 @@ function createBridge() {
     return client;
 }
 
-function initBridge(client) { 
-    portfinder.getPort(function (err, port) {
-
-        ipcRenderer.send(defs.BCKEND_SPWN_TCPPORT_CHANNEL, port);
-
-        ipcRenderer.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
-            client.initHost('127.0.0.1');
-            client.initPort(port);
-            console.log(`BACKEND IS INDEED INITIALIZED AND NOW WE CONNECT TO IT${port}`)
-            
-            connectBridge(client);
-            
-        })
+async function getPortFree() {
+    return new Promise( res => {
+        const srv = net.createServer();
+        srv.listen(0, () => {
+            const port = srv.address().port
+            srv.close((err) => res(port))
+        });
     })
 }
+
+async function initBridge(client) {
+
+    // test manual 'net' port by probe binding
+    const PORT = await getPortFree();
+    console.log('free port is > ' + PORT);
+    ipcRenderer.send(defs.BCKEND_SPWN_TCPPORT_CHANNEL, PORT);
+
+    ipcRenderer.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
+        client.initHost('127.0.0.1');
+        client.initPort(PORT);
+        console.log(`BACKEND IS INDEED INITIALIZED AND NOW WE CONNECT TO IT${PORT}`)
+    })}
+
+    // test portastic
+    // portastic.find({
+    //     min: 8001,
+    //     max: 8080,
+    //     retrieve: 1,
+    // })
+    // .then(function(port){
+    //     console.log('free port is > ' + port[0]);
+    //     ipcRenderer.send(defs.BCKEND_SPWN_TCPPORT_CHANNEL, port[0]);
+
+    //     ipcRenderer.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
+    //         client.initHost('127.0.0.1');
+    //         client.initPort(port[0]);
+    //         console.log(`BACKEND IS INDEED INITIALIZED AND NOW WE CONNECT TO IT${port}`)
+
+    //     })})
+
+    // test portfinder
+    // portfinder.getPortPromise().then((port) => {
+    //     ipcRenderer.send(defs.BCKEND_SPWN_TCPPORT_CHANNEL, port);
+
+    //     ipcRenderer.on(defs.BCKEND_SPWN_TCPPORT_CHANNEL, (event, arg) => {
+    //         client.initHost('127.0.0.1');
+    //         client.initPort(port);
+    //         console.log(`BACKEND IS INDEED INITIALIZED AND NOW WE CONNECT TO IT${port}`)
+    //         connectBridge(client);
+    //     });
+    // }).catch((err) => {
+    //     console.error(err);
+    // });
+    //}
 
 /* exposes available virtual ports */
 function loadPorts(client: { onData: (arg0: string) => void; }): void {
@@ -76,9 +121,11 @@ function loadPorts(client: { onData: (arg0: string) => void; }): void {
     //client.onData(ReqPortsPending);
 }
 
-function shutdown() {
-    console.error('closing backend msg from main')
-    return client.onData('00'); //hardcoded, swap it with the cmd from the interface definition
+async function shutdown() {
+    await client.onData('00'); // hardcoded, swap it with the cmd from the interface definition
+    await sleep(800);          // sleeps must be removed and instead block (await) where synchronicity is required
+    client = null;
+    ipcRenderer.send('closed'); // add to ipc_defs.ts
 }
 
 function sleep(ms) {
@@ -86,6 +133,6 @@ function sleep(ms) {
 }
 
 async function connectBridge(client) {
-    await sleep(600);
+    await sleep(800);
     client.initConnect();
 }
